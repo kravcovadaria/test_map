@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_map/app/presentation/screens/input_name_screen.dart';
 
@@ -14,19 +12,61 @@ class App extends StatelessWidget {
     const Color mainAccent = Color(0xFF0CBA70);
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Test application',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: TextTheme(
-          bodyMedium: default400.copyWith(fontSize: 12.r),
-          bodyLarge: default400.copyWith(fontSize: 12.r),
-          titleLarge: default400.copyWith(
+          headlineLarge: default400.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: 21.r,
+            height: 16.13 / 16,
+          ),
+          headlineMedium: default400.copyWith(
             fontWeight: FontWeight.w700,
             fontSize: 19.r,
+            height: 22.8 / 19,
           ),
-          titleMedium: default400.copyWith(fontSize: 12.r),
+          headlineSmall: default400.copyWith(
+            fontSize: 13.r,
+            height: 13.1 / 13,
+          ),
+          titleLarge: default400.copyWith(
+            fontSize: 10.r,
+            height: 12 / 10,
+          ),
+          titleMedium: default400.copyWith(
+            color: mainAccent,
+            fontSize: 10.r,
+            fontWeight: FontWeight.w500,
+            height: 11.93 / 10,
+          ),
+          titleSmall: default400.copyWith(fontSize: 8.r, height: 9.6 / 8),
+          bodyLarge: default400.copyWith(fontSize: 12.r),
+          bodyMedium: default400.copyWith(
+            fontSize: 12.r,
+            height: 17 / 12,
+          ),
+          // bodySmall: default400.copyWith(
+          //   color: const Color.fromRGBO(255, 255, 255, 0.6),
+          //   fontSize: 8.r,
+          //   height: 9.6 / 8,
+          // ),
           labelLarge: default400.copyWith(
             fontWeight: FontWeight.w500,
             fontSize: 13.r,
+            height: 15.51 / 13,
+          ),
+          labelMedium: default400.copyWith(
+            fontSize: 10.r,
+            fontWeight: FontWeight.w500,
+            color: mainAccent,
+            height: 11.93 / 10,
+          ),
+          labelSmall: default400.copyWith(
+            color: const Color(0xFF6E6E6E),
+            fontWeight: FontWeight.w500,
+            fontSize: 9.r,
+            height: 10.74 / 9,
           ),
         ),
         textButtonTheme: TextButtonThemeData(
@@ -36,6 +76,7 @@ class App extends StatelessWidget {
                 fontFamily: 'RFDewi',
                 fontWeight: FontWeight.w500,
                 fontSize: 13.r,
+                height: 15.51 / 13,
               ),
             ),
             backgroundColor: MaterialStateProperty.all<Color>(mainAccent),
@@ -50,6 +91,7 @@ class App extends StatelessWidget {
           hintStyle: default400.copyWith(
             fontSize: 11.r,
             color: Colors.white.withOpacity(0.6),
+            height: 13.2 / 11,
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.r),
@@ -64,9 +106,12 @@ class App extends StatelessWidget {
             fontWeight: FontWeight.w500,
             fontSize: 15.r,
           ),
-
           elevation: 0,
           iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Color(0xFF1E1E1E),
+          elevation: 0,
         ),
         progressIndicatorTheme:
             const ProgressIndicatorThemeData(color: Colors.white),

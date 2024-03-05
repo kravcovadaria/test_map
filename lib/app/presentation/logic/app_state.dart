@@ -6,22 +6,28 @@ class AppState {
     this.gpsAvailable = false,
     this.connectionAvailable = false,
     this.inProcess = false,
+    this.position,
   });
 
   final String name;
   final bool gpsAvailable;
   final bool connectionAvailable;
   final bool inProcess;
+  final LatLng? position;
 
   AppState copyWith({
     String? name,
     bool? gpsAvailable,
     bool? connectionAvailable,
+    bool? inProcess,
+    LatLng? position,
   }) {
     return AppState(
-        name: name ?? this.name,
-        gpsAvailable: gpsAvailable ?? this.gpsAvailable,
-        connectionAvailable: connectionAvailable ?? this.connectionAvailable,
+      name: name ?? this.name,
+      gpsAvailable: gpsAvailable ?? this.gpsAvailable,
+      connectionAvailable: connectionAvailable ?? this.connectionAvailable,
+      inProcess: inProcess ?? this.inProcess,
+      position: position ?? this.position,
     );
   }
 }

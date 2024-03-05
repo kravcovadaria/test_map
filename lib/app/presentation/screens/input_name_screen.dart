@@ -1,12 +1,9 @@
-import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_map/app/presentation/logic/app_cubit.dart';
 import 'package:test_map/app/presentation/screens/main_screen.dart';
+import 'package:test_map/app/presentation/widget/wide_button.dart';
 
 class InputNameScreen extends StatefulWidget {
   const InputNameScreen({super.key});
@@ -37,7 +34,7 @@ class _InputNameScreenState extends State<InputNameScreen> {
                 children: [
                   Text(
                     'Як до вас звертатися?',
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
                   Padding(
@@ -65,49 +62,44 @@ class _InputNameScreenState extends State<InputNameScreen> {
           const Spacer(
             flex: 1,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BlocBuilder<AppCubit, AppState>(
-                builder: (context, state) {
-                  return Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        left: 22.r,
-                        right: 22.r,
-                        bottom: 20.r,
-                      ),
-                      child: TextButton(
-                        child: state.inProcess
-                            ? const CupertinoActivityIndicator(
-                                radius: 11,
-                              )
-                            : Text(
-                                'Продовжити',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge
-                                    ?.copyWith(color: Colors.white),
-                              ),
-                        onPressed: () {
-                          AppCubit cubit = BlocProvider.of<AppCubit>(context);
-                          cubit.submit(_controller.text).then(
-                            (value) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const MainScreen(),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.only(
+              left: 22.r,
+              right: 22.r,
+              bottom: 20.r,
+            ),
+            child: BlocBuilder<AppCubit, AppState>(
+              builder: (context, state) {
+                return WideButton(
+                  child: state.inProcess
+                      ? SizedBox(
+                          height: 11.r,
+                          width: 11.r,
+                          child: const CircularProgressIndicator(strokeWidth: 2,),
+                        )
+                      : Text(
+                          'Продовжити',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge
+                              ?.copyWith(color: Colors.white),
+                        ),
+                  onTap: () {
+                    AppCubit cubit = BlocProvider.of<AppCubit>(context);
+                    cubit.submit(_controller.text).then(
+                      (value) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MainScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
