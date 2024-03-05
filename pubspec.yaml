@@ -1,0 +1,39 @@
+name: test_map
+description: "Test project for MaxOpen"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0-82.0.dev <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+  flutter_bloc: ^8.1.4
+  connectivity_plus: ^5.0.2
+  geolocator: ^11.0.0
+  flutter_screenutil: ^5.9.0
+  flutter_svg: '1.1.6'
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+
+  fonts:
+    - family: RFDewi
+      fonts:
+        - asset: assets/fonts/RFDewi-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/RFDewi-Black.ttf
+          weight: 700
