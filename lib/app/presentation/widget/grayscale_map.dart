@@ -1,20 +1,35 @@
+import 'dart:async';
+
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:test_map/app/presentation/widget/app_icon.dart';
 import 'package:test_map/app_resources.dart';
 
-class GrayscaleMap extends StatelessWidget {
+class GrayscaleMap extends StatefulWidget {
   const GrayscaleMap({super.key, this.position});
 
   final LatLng? position;
 
   @override
+  State<StatefulWidget> createState() => GrayscaleMapState();
+}
+
+class GrayscaleMapState extends State<GrayscaleMap> {
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
+  late BitmapDescriptor bitmapDescriptor;
+  Set<Marker> markers = {};
+
+  @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    final position = this.position;
+    final position = widget.position;
 
     return position == null
         ? Stack(
@@ -89,45 +104,61 @@ class GrayscaleMap extends StatelessWidget {
               ),
             ],
           )
-        : FlutterMap(
-            options: MapOptions(
-              initialCenter: this.position!,
-              initialZoom: 14,
-            ),
-            children: [
-              ColorFiltered(
-                colorFilter: const ColorFilter.mode(
-                  Color(0xFF757575),
-                  BlendMode.color,
-                ),
-                //    ColorFilter.matrix(<double>[
-                // 0.2126,0.7152,0.0722,0,0,
-                //   0.2126,0.7152,0.0722,0,0,
-                //   0.2126,0.7152,0.0722,0,0,
-                //   0,0,0,1,0,
-                //   ]),
-                child:
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.app',
-                  tileBuilder: darkModeTileBuilder,
-                 ),
-              ),
-              MarkerLayer(
-                markers: [
-                  Marker(
-                    width: 12.r,
-                    height: 12.r,
-                    point: this.position!,
-                    child: AppIcon.square(
-                      AppResources.marker,
-                      size: 12.r,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+        : GoogleMap(
+            mapType: MapType.normal,
+            initialCameraPosition: CameraPosition(target: position, zoom: 15),
+            onMapCreated: (GoogleMapController controller) async {
+              await _initMarkers();
+              controller.setMapStyle(
+                  '[{"featureType": "landscape","stylers": [{ "color": "#323432" }]},'
+                  '{"featureType": "water","stylers": [{ "color": "#191a1a" }]},'
+                  '{"featureType": "landscape.natural","stylers": [{ "color": "#323432" }]},'
+                  '{"featureType": "road","elementType": "geometry","stylers": [{ "color": "#454545" }]},'
+                  '{"featureType": "poi","elementType": "labels","stylers": [{ "visibility": "off" }]},'
+                  '{"featureType": "poi","elementType": "geometry","stylers": [{ "color": "323432" }]},'
+                  '{"featureType": "administrative","elementType": "labels.text.fill","stylers": [{ "color": "#8c8b8b" }]},'
+                  '{"featureType": "administrative","elementType": "labels.text.stroke","stylers": [{ "color": "#2B2C2B" }]},'
+                  '{"featureType": "road","elementType": "labels.text.fill","stylers": [{ "color": "#8c8b8b" }]},'
+                  '{"featureType": "all","elementType": "labels.text.stroke","stylers": [{ "color": "#2B2C2B" }]}]');
+              _controller.complete(controller);
+              setState(() {});
+            },
+            markers: markers,
           );
+  }
+
+  Future<void> _initMarkers() async {
+    final position = widget.position;
+    if (position == null) {
+      return;
+    }
+
+    // воркераунд, щоб іконку не робило занадто маленькою
+    double screenRatio = MediaQuery.of(context).devicePixelRatio;
+    bitmapDescriptor = await _getBitmapDescriptorFromAssetBytes(
+        'assets/images/marker.png', (12 * screenRatio).r.toInt());
+    markers.add(
+      Marker(
+        markerId: MarkerId('$position'),
+        position: position,
+        icon: bitmapDescriptor,
+      ),
+    );
+  }
+
+  Future<Uint8List?> _getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
+        ?.buffer
+        .asUint8List();
+  }
+
+  Future<BitmapDescriptor> _getBitmapDescriptorFromAssetBytes(
+      String path, int width) async {
+    final Uint8List? imageData = await _getBytesFromAsset(path, width);
+    return BitmapDescriptor.fromBytes(imageData!);
   }
 }
