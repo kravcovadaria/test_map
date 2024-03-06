@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WideButton extends StatelessWidget {
   const WideButton({
@@ -18,7 +19,10 @@ class WideButton extends StatelessWidget {
         Expanded(
           child: TextButton(
             onPressed: onTap,
-            child: child,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.5.r),
+              child: child,
+            ),
           ),
         ),
       ],

@@ -36,5 +36,9 @@ flutter:
       fonts:
         - asset: assets/fonts/RFDewi-Regular.ttf
           weight: 400
+        - asset: assets/fonts/RFDewi-Semibold.ttf
+          weight: 500
+        - asset: assets/fonts/RFDewi-Bold.ttf
+          weight: 600
         - asset: assets/fonts/RFDewi-Black.ttf
           weight: 700

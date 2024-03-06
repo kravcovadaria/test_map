@@ -10,6 +10,18 @@ import 'package:test_map/app/presentation/widget/grayscale_map.dart';
 import 'package:test_map/app/presentation/widget/wide_button.dart';
 import 'package:test_map/app_resources.dart';
 
+class _ZeroSize extends StatelessWidget implements PreferredSizeWidget {
+  const _ZeroSize();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox.shrink();
+  }
+
+  @override
+  Size get preferredSize => Size.zero;
+}
+
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -18,19 +30,16 @@ class MainScreen extends StatefulWidget {
 }
 
 class MainScreenState extends State<MainScreen> {
-
   @override
   void initState() {
     super.initState();
 
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      AppCubit cubit = BlocProvider.of<AppCubit>(context);
-      cubit.calculatePosition();
+      _calculatePosition();
     });
 
-    Geolocator.getServiceStatusStream().listen((ServiceStatus) {
-      AppCubit cubit = BlocProvider.of<AppCubit>(context);
-      cubit.calculatePosition();
+    Geolocator.getServiceStatusStream().listen((ServiceStatus status) {
+      _calculatePosition();
     });
   }
 
@@ -43,6 +52,13 @@ class MainScreenState extends State<MainScreen> {
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: const Text('logo'),
+        bottom: const _ZeroSize(),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            width: 1,
+            color: themeData.appBarTheme.backgroundColor!,
+          ),
+        ),
         actions: [
           IconButton(
             icon: AppIcon.square(
@@ -55,31 +71,34 @@ class MainScreenState extends State<MainScreen> {
           SizedBox(width: 11.r),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          // перемикати сторінку
-        },
-        selectedIndex: 1, // поки нема інших сторінок
-        backgroundColor: themeData.scaffoldBackgroundColor,
-        surfaceTintColor: Colors.transparent,
-        destinations: [
-          BottomBarButton(
-            icon: AppResources.clipboard,
-            caption: 'Заявки',
-            onTap: () {},
-          ),
-          BottomBarButton(
-            icon: AppResources.home,
-            caption: 'Головна',
-            onTap: () {},
-            selected: true, // поки нема інших сторінок
-          ),
-          BottomBarButton(
-            icon: AppResources.user,
-            caption: 'Особисті дані',
-            onTap: () {},
-          ),
-        ],
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.r),
+        child: NavigationBar(
+          onDestinationSelected: (int index) {
+            // перемикати сторінку
+          },
+          selectedIndex: 1, // поки нема інших сторінок
+          backgroundColor: themeData.scaffoldBackgroundColor,
+          surfaceTintColor: Colors.transparent,
+          destinations: [
+            BottomBarButton(
+              icon: AppResources.clipboard,
+              caption: 'Заявки',
+              onTap: () {},
+            ),
+            BottomBarButton(
+              icon: AppResources.home,
+              caption: 'Головна',
+              onTap: () {},
+              selected: true, // поки нема інших сторінок
+            ),
+            BottomBarButton(
+              icon: AppResources.user,
+              caption: 'Особисті дані',
+              onTap: () {},
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -166,8 +185,9 @@ class MainScreenState extends State<MainScreen> {
                       Radius.circular(55.r),
                     ),
                     child: BlocBuilder<AppCubit, AppState>(
-                      builder: (context, state) =>
-                          GrayscaleMap(position: state.position),
+                      builder: (context, state) => GrayscaleMap(
+                          position: state.position,
+                          afterPermissionGranted: _calculatePosition),
                     ),
                   ),
                 ),
@@ -190,5 +210,10 @@ class MainScreenState extends State<MainScreen> {
         ],
       ),
     );
+  }
+
+  void _calculatePosition() {
+    AppCubit cubit = BlocProvider.of<AppCubit>(context);
+    cubit.calculatePosition();
   }
 }

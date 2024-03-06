@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,9 +11,14 @@ import 'package:test_map/app/presentation/widget/app_icon.dart';
 import 'package:test_map/app_resources.dart';
 
 class GrayscaleMap extends StatefulWidget {
-  const GrayscaleMap({super.key, this.position});
+  const GrayscaleMap({
+    super.key,
+    this.position,
+    this.afterPermissionGranted,
+  });
 
   final LatLng? position;
+  final VoidCallback? afterPermissionGranted;
 
   @override
   State<StatefulWidget> createState() => GrayscaleMapState();
@@ -100,7 +104,9 @@ class GrayscaleMapState extends State<GrayscaleMap> {
                       ),
                       GestureDetector(
                           onTap: () {
-                            Geolocator.requestPermission();
+                            Geolocator.requestPermission().then((result) {
+                              widget.afterPermissionGranted?.call();
+                            });
                           },
                           child: Text(
                             'Налаштування геолокації >',
@@ -114,6 +120,7 @@ class GrayscaleMapState extends State<GrayscaleMap> {
           )
         : GoogleMap(
             mapType: MapType.normal,
+            padding: EdgeInsets.only(bottom: 55.r / 4, left: 55.r / 4),
             initialCameraPosition: CameraPosition(target: position, zoom: 15),
             onMapCreated: (GoogleMapController controller) async {
               await _initMarkers();
@@ -132,6 +139,7 @@ class GrayscaleMapState extends State<GrayscaleMap> {
               setState(() {});
             },
             markers: markers,
+            zoomControlsEnabled: false,
           );
   }
 

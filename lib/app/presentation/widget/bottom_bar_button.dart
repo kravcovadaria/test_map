@@ -18,11 +18,10 @@ class BottomBarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Align(child: GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: 57.r,
-        // height: 38.r,
+        width: 64.r,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -32,9 +31,10 @@ class BottomBarButton extends StatelessWidget {
                     : Theme.of(context).textTheme.labelSmall?.color,
                 size: 20.r),
             Padding(
-              padding: EdgeInsets.only(bottom: 7.r),
+              padding: EdgeInsets.only(top: 7.r),
               child: Text(
                 caption,
+                textAlign: TextAlign.center,
                 style: selected
                     ? Theme.of(context)
                         .textTheme
@@ -45,7 +45,7 @@ class BottomBarButton extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ),),
     );
   }
 }

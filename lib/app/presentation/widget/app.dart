@@ -17,8 +17,8 @@ class App extends StatelessWidget {
       theme: ThemeData(
         textTheme: TextTheme(
           headlineLarge: default400.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 21.r,
+            fontWeight: FontWeight.w700,
+            fontSize: 16.r,
             height: 16.13 / 16,
           ),
           headlineMedium: default400.copyWith(
@@ -40,17 +40,16 @@ class App extends StatelessWidget {
             fontWeight: FontWeight.w500,
             height: 11.93 / 10,
           ),
-          titleSmall: default400.copyWith(fontSize: 8.r, height: 9.6 / 8),
+          titleSmall: default400.copyWith(
+            color: const Color.fromRGBO(255, 255, 255, 0.6),
+            fontSize: 8.r,
+            height: 9.6 / 8,
+          ),
           bodyLarge: default400.copyWith(fontSize: 12.r),
           bodyMedium: default400.copyWith(
             fontSize: 12.r,
             height: 17 / 12,
           ),
-          // bodySmall: default400.copyWith(
-          //   color: const Color.fromRGBO(255, 255, 255, 0.6),
-          //   fontSize: 8.r,
-          //   height: 9.6 / 8,
-          // ),
           labelLarge: default400.copyWith(
             fontWeight: FontWeight.w500,
             fontSize: 13.r,
