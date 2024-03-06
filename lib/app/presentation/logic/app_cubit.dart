@@ -19,10 +19,16 @@ class AppCubit extends Cubit<AppState> {
       ),
     );
 
+    calculatePosition();
+  }
+
+  Future<void> calculatePosition() async {
     ConnectivityResult connectivityResult =
         await Connectivity().checkConnectivity();
 
-    bool connectionAvailable = connectivityResult != ConnectivityResult.none;
+    bool connectionAvailable = connectivityResult != ConnectivityResult.none &&
+        // якщо увімкнено впн, але нема з'єднання з інтернетом, буде хибне підтвердження
+        connectivityResult != ConnectivityResult.vpn;
     LocationPermission gpsPermission = await Geolocator.checkPermission();
     bool gpsAvailable = gpsPermission == LocationPermission.always ||
         gpsPermission == LocationPermission.whileInUse;
@@ -39,6 +45,7 @@ class AppCubit extends Cubit<AppState> {
         gpsAvailable: gpsAvailable,
         inProcess: false,
         position: position,
+        deletePosition: position == null,
       ),
     );
   }

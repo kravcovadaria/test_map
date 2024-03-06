@@ -1,6 +1,8 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:test_map/app/presentation/logic/app_cubit.dart';
 import 'package:test_map/app/presentation/widget/app_icon.dart';
 import 'package:test_map/app/presentation/widget/bottom_bar_button.dart';
@@ -16,6 +18,22 @@ class MainScreen extends StatefulWidget {
 }
 
 class MainScreenState extends State<MainScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      AppCubit cubit = BlocProvider.of<AppCubit>(context);
+      cubit.calculatePosition();
+    });
+
+    Geolocator.getServiceStatusStream().listen((ServiceStatus) {
+      AppCubit cubit = BlocProvider.of<AppCubit>(context);
+      cubit.calculatePosition();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);

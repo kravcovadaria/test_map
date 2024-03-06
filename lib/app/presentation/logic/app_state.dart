@@ -21,13 +21,14 @@ class AppState {
     bool? connectionAvailable,
     bool? inProcess,
     LatLng? position,
+    bool deletePosition = false,
   }) {
     return AppState(
       name: name ?? this.name,
       gpsAvailable: gpsAvailable ?? this.gpsAvailable,
       connectionAvailable: connectionAvailable ?? this.connectionAvailable,
       inProcess: inProcess ?? this.inProcess,
-      position: position ?? this.position,
+      position: deletePosition ? null : position ?? this.position,
     );
   }
 }

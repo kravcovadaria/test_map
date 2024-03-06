@@ -27,6 +27,14 @@ class GrayscaleMapState extends State<GrayscaleMap> {
   Set<Marker> markers = {};
 
   @override
+  void didUpdateWidget(covariant GrayscaleMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if ((oldWidget.position == null) != (widget.position == null)) {
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final position = widget.position;
