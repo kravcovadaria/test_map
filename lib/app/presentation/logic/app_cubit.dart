@@ -11,7 +11,7 @@ class AppCubit extends Cubit<AppState> {
   Future<void> submit(String name) async {
     emit(
       state.copyWith(
-        name: name,
+        name: name.trim(),
         position: null,
         inProcess: true,
         gpsAvailable: false,
@@ -23,20 +23,30 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> calculatePosition() async {
+    emit(state.copyWith(inProcess: true));
+    _calculatePosition();
+  }
+
+  Future<void> _calculatePosition() async {
     ConnectivityResult connectivityResult =
         await Connectivity().checkConnectivity();
 
+    // якщо увімкнено впн, але нема з'єднання з інтернетом, буде хибне підтвердження
     bool connectionAvailable = connectivityResult != ConnectivityResult.none &&
-        // якщо увімкнено впн, але нема з'єднання з інтернетом, буде хибне підтвердження
         connectivityResult != ConnectivityResult.vpn;
-    LocationPermission gpsPermission = await Geolocator.checkPermission();
-    bool gpsAvailable = gpsPermission == LocationPermission.always ||
-        gpsPermission == LocationPermission.whileInUse;
+
+    // нема сенсу перевіряти, бо це перевіряється при запиті позиції
+    bool gpsAvailable = true;
 
     LatLng? position;
     if (connectionAvailable && gpsAvailable) {
-      Position? pos = await Geolocator.getCurrentPosition();
-      position = LatLng(pos.latitude, pos.longitude);
+      try {
+        // якщо юзер в процесі відключив геопозицію, буде виключення
+        Position? pos = await Geolocator.getCurrentPosition();
+        position = LatLng(pos.latitude, pos.longitude);
+      } catch (e) {
+        gpsAvailable = false;
+      }
     }
 
     emit(

@@ -15,10 +15,12 @@ class GrayscaleMap extends StatefulWidget {
     super.key,
     this.position,
     this.afterPermissionGranted,
+    this.isLoading = false,
   });
 
   final LatLng? position;
   final VoidCallback? afterPermissionGranted;
+  final bool isLoading;
 
   @override
   State<StatefulWidget> createState() => GrayscaleMapState();
@@ -58,64 +60,76 @@ class GrayscaleMapState extends State<GrayscaleMap> {
                   color: Color.fromRGBO(0, 0, 0, 0.7),
                 ),
               ),
-              Positioned.fill(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 25.r,
-                    // vertical: 50.r,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF383838),
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(17.r),
-                          ),
+              widget.isLoading
+                  ? Positioned.fill(
+                      child: Center(
+                          child: SizedBox(
+                        height: 20.r,
+                        width: 20.r,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
                         ),
-                        alignment: Alignment.center,
-                        height: 65.r,
-                        width: 65.r,
-                        child: AppIcon.square(
-                          AppResources.noWifi,
-                          color: themeData.primaryColor,
-                          size: 30.r,
+                      )),
+                    )
+                  : Positioned.fill(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 25.r,
+                          // vertical: 50.r,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF383838),
+                                shape: BoxShape.rectangle,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(17.r),
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              height: 65.r,
+                              width: 65.r,
+                              child: AppIcon.square(
+                                AppResources.noWifi,
+                                color: themeData.primaryColor,
+                                size: 30.r,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 20.r),
+                              child: Text(
+                                'Відсутній зв\'язок',
+                                style:
+                                    Theme.of(context).textTheme.headlineMedium,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20.r),
+                              child: Text(
+                                'Відсутність доступу до геолокації. Переконайтеся, що у додатку увімкнено геолокацію та перевірте з\'єднання з Інтернетом.',
+                                textAlign: TextAlign.center,
+                                style: themeData.textTheme.bodyMedium
+                                    ?.copyWith(letterSpacing: 0.1),
+                              ),
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  Geolocator.requestPermission().then((result) {
+                                    widget.afterPermissionGranted?.call();
+                                  });
+                                },
+                                child: Text(
+                                  'Налаштування геолокації >',
+                                  style: themeData.textTheme.labelMedium,
+                                )),
+                          ],
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 20.r),
-                        child: Text(
-                          'Відсутній зв\'язок',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20.r),
-                        child: Text(
-                          'Відсутність доступу до геолокації. Переконайтеся, що у додатку увімкнено геолокацію та перевірте з\'єднання з Інтернетом.',
-                          textAlign: TextAlign.center,
-                          style: themeData.textTheme.bodyMedium
-                              ?.copyWith(letterSpacing: 0.1),
-                        ),
-                      ),
-                      GestureDetector(
-                          onTap: () {
-                            Geolocator.requestPermission().then((result) {
-                              widget.afterPermissionGranted?.call();
-                            });
-                          },
-                          child: Text(
-                            'Налаштування геолокації >',
-                            style: themeData.textTheme.labelMedium,
-                          )),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
             ],
           )
         : GoogleMap(

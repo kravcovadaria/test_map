@@ -41,6 +41,10 @@ class MainScreenState extends State<MainScreen> {
     Geolocator.getServiceStatusStream().listen((ServiceStatus status) {
       _calculatePosition();
     });
+
+    Geolocator.getPositionStream().listen((Position position) {
+      _calculatePosition();
+    });
   }
 
   @override
@@ -186,8 +190,10 @@ class MainScreenState extends State<MainScreen> {
                     ),
                     child: BlocBuilder<AppCubit, AppState>(
                       builder: (context, state) => GrayscaleMap(
-                          position: state.position,
-                          afterPermissionGranted: _calculatePosition),
+                        position: state.position,
+                        afterPermissionGranted: _calculatePosition,
+                        isLoading: state.inProcess,
+                      ),
                     ),
                   ),
                 ),
@@ -213,7 +219,9 @@ class MainScreenState extends State<MainScreen> {
   }
 
   void _calculatePosition() {
-    AppCubit cubit = BlocProvider.of<AppCubit>(context);
-    cubit.calculatePosition();
+    if (context.mounted) {
+      AppCubit cubit = BlocProvider.of<AppCubit>(context);
+      cubit.calculatePosition();
+    }
   }
 }
